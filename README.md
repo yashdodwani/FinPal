@@ -17,4 +17,8 @@ See the repository tree for packages. Developer A will implement agents under `a
 
 A multi-agent backend skeleton built with FastAPI, targeting Gemini for AI agents and NeonDB (PostgreSQL) for storage. This repository provides a minimal scaffolding with TODOs and placeholders—no business logic yet.
 
-
+## Future
+Google message integrate
+Call recording 
+Screenshare Agentic
+Tavilly
