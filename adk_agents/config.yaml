@@ -1,0 +1,6 @@
+version: 1
+
+agents:
+  - id: financial_guardian
+    entrypoint: app.adk_app.agent_app:root_agent
+    description: "Master multi-agent router for FinPal (loan, policy, scam)."

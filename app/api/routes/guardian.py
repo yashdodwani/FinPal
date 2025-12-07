@@ -1,12 +1,21 @@
-"""Guardian route: entrypoint to master agent router."""
-from fastapi import APIRouter
-from app.schemas.common import UserRequest, AgentResponse
-from app.agents.master.master_agent import route_request
+from fastapi import APIRouter, Depends
+
+from app.schemas import UserRequest, AgentResponse
+from app.agents.master import route_request
 
 router = APIRouter()
 
-@router.post("/guardian", response_model=AgentResponse)
-async def guardian_endpoint(payload: UserRequest) -> AgentResponse:
-    """POST /guardian -> calls master agent routing stub."""
-    return await route_request(payload)
 
+@router.post("/guardian", response_model=AgentResponse, tags=["guardian"])
+async def guardian_endpoint(
+    request: UserRequest,
+) -> AgentResponse:
+    """
+    Main entrypoint for the Financial Safety Net.
+
+    - Accepts a generic UserRequest
+    - Delegates to the master agent
+    - Returns an AgentResponse (with final_route + data)
+    """
+    response = await route_request(request)
+    return response

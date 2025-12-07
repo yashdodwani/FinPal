@@ -9,9 +9,15 @@ It uses:
 - Optional route_hint from the UserRequest
 - LLM-based intent classification (router_prompt.txt)
 - Returns a unified AgentResponse
+
+NOTE: Right now this is a plain Python orchestrator.
+To integrate with Google ADK, you can wrap `route_request` in an ADK LlmAgent
+and use `adk web` to inspect it visually.
 """
 
-from typing import Dict, Any
+import json
+from pathlib import Path
+from typing import Any, Dict
 
 from app.schemas import (
     UserRequest,
@@ -22,32 +28,33 @@ from app.schemas import (
     PolicyQARequest,
     ScamAnalysisRequest,
 )
-
-from .types import RouterDecision
 from app.core.gemini import run_gemini
 from app.agents.loan.pipeline import run_loan_pipeline
 from app.agents.policy.pipeline import run_policy_pipeline
-from app.agents.scam.pipeline import run_scam_pipeline
+from app.agents.scam.pipeline import run_scam_pipeline  # placeholder for teammate
+
+from .types import RouterDecision
+
+ROUTER_PROMPT_PATH = Path("app/agents/master/router_prompt.txt")
 
 
-ROUTER_PROMPT_PATH = "app/agents/master/router_prompt.txt"
-
-
-async def load_router_prompt() -> str:
-    """Load router system prompt from file."""
-    with open(ROUTER_PROMPT_PATH, "r") as f:
-        return f.read()
+def _load_router_prompt() -> str:
+    return ROUTER_PROMPT_PATH.read_text(encoding="utf-8")
 
 
 async def classify_route(user_req: UserRequest) -> RouterDecision:
     """
-    Uses Gemini to classify the user's intent.
+    Uses Gemini 3 to classify the user's intent.
     Returns a RouterDecision(route: RouteEnum, reason: str).
+
+    Handles both:
+    - dict outputs from run_gemini
+    - {"raw_output": "<json string>"} fallback
     """
 
-    prompt = await load_router_prompt()
+    prompt = _load_router_prompt()
 
-    llm_input = {
+    payload: Dict[str, Any] = {
         "system_instruction": prompt,
         "user": {
             "text": user_req.text,
@@ -55,18 +62,27 @@ async def classify_route(user_req: UserRequest) -> RouterDecision:
         },
     }
 
-    llm_output = await run_gemini(llm_input)
+    llm_output = await run_gemini(payload)
 
-    try:
-        parsed = RouterDecision.model_validate(llm_output)  # ensures type safety
-        return parsed
-    except Exception as e:
-        raise ValueError(f"RouterDecision parsing failed: {e}")
+    if "error" in llm_output:
+        raise RuntimeError(f"Router LLM error: {llm_output['error']}")
+
+    if "raw_output" in llm_output:
+        # LLM returned a JSON string we need to parse
+        try:
+            parsed = json.loads(llm_output["raw_output"])
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(f"Failed to parse router JSON: {exc}") from exc
+    else:
+        parsed = llm_output
+
+    return RouterDecision.model_validate(parsed)
 
 
 async def route_request(user_req: UserRequest) -> AgentResponse:
     """
-    Main entry point.
+    Main entry point used by FastAPI.
+
     1. Uses route_hint if provided.
     2. Otherwise calls classify_route().
     3. Calls the appropriate pipeline.
@@ -76,18 +92,21 @@ async def route_request(user_req: UserRequest) -> AgentResponse:
         # 1. Use user-provided hint if available
         if user_req.route_hint:
             final_route = user_req.route_hint
-            reason = "Used route_hint"
+            reason = "Used route_hint provided by client."
         else:
             # 2. Otherwise classify with LLM
             decision = await classify_route(user_req)
             final_route = decision.route
             reason = decision.reason
 
-        # 3. Dispatch pipeline
+        # 3. Dispatch to the selected pipeline
         if final_route == RouteEnum.LOAN_DOC:
             payload = LoanIngestionRequest(
                 language=user_req.language,
-                source={"file_id": user_req.file_id, "text_content": user_req.text},
+                source={
+                    "file_id": user_req.file_id,
+                    "text_content": user_req.text,
+                },
             )
             result = await run_loan_pipeline(payload)
 
@@ -112,7 +131,7 @@ async def route_request(user_req: UserRequest) -> AgentResponse:
             return AgentResponse(
                 final_route=final_route,
                 data=None,
-                error=AgentError(message="Unknown route"),
+                error=AgentError(message="Unknown route selected by router."),
                 debug_info={"reason": reason},
             )
 
@@ -123,10 +142,11 @@ async def route_request(user_req: UserRequest) -> AgentResponse:
             debug_info={"router_reason": reason},
         )
 
-    except Exception as e:
+    except Exception as exc:
         # Catch-all failure
         return AgentResponse(
             final_route=user_req.route_hint or RouteEnum.SCAM_CHECK,
             data=None,
-            error=AgentError(message=str(e)),
+            error=AgentError(message=str(exc)),
+            debug_info={"router_failed": True},
         )

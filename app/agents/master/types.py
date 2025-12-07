@@ -10,5 +10,6 @@ class RouterDecision(BaseModel):
     """
     Clean structured output from the router LLM.
     """
+
     route: RouteEnum = Field(..., description="Chosen high-level route.")
     reason: str = Field(..., description="Short explanation why this route was selected.")
