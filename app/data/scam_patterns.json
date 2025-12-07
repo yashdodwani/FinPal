@@ -6,6 +6,141 @@
   {
     "name": "Loan Fee Advance",
     "description": "Victim asked to pay processing fee upfront for a loan; then the lender disappears."
+  },
+  {
+    "name": "Fake UPI Refund Request",
+    "description": "Victim told they will get refund only if they send ₹1 first to verify account."
+  },
+  {
+    "name": "OTP Sharing Fraud",
+    "description": "Scammer tricks victim into sharing OTP claiming verification or job confirmation."
+  },
+  {
+    "name": "Job Offer Registration Scam",
+    "description": "Fraudster offers high-paying job and asks for registration or training fee upfront."
+  },
+  {
+    "name": "Courier Custom Charges Scam",
+    "description": "Fake courier alert claims parcel held at customs; asks for immediate payment."
+  },
+  {
+    "name": "Electricity Disconnection Threat",
+    "description": "Threat that power will be cut unless bill is paid or KYC updated immediately."
+  },
+  {
+    "name": "Income Tax Refund Phishing",
+    "description": "Victim told they are eligible for tax refund; scam link steals bank details."
+  },
+  {
+    "name": "Credit Limit Upgrade Scam",
+    "description": "Fake bank agent asks user to install remote access apps to increase credit limit."
+  },
+  {
+    "name": "PAN Card Blocking Threat",
+    "description": "Scammers claim PAN will be blocked if user doesn't verify details on scam link."
+  },
+  {
+    "name": "Online Marketplace Buyer Scam",
+    "description": "Fraudster pretends to buy product and sends fake QR code for receiving payment."
+  },
+  {
+    "name": "Online Marketplace Seller Scam",
+    "description": "Victim sends money to book an item but seller disappears after payment."
+  },
+  {
+    "name": "Fake Tech Support Remote Access",
+    "description": "Scammer pretends to be support and asks user to download remote control software."
+  },
+  {
+    "name": "Investment Multiplying Trick",
+    "description": "Victim told money will double instantly after transfer; no returns provided."
+  },
+  {
+    "name": "Fake Trading Platform",
+    "description": "Users invest in crypto/forex app that shows fake profits until withdrawal is refused."
+  },
+  {
+    "name": "Fake RBI/Bank Helpline Number",
+    "description": "Fake helpline number steals card details under the pretext of dispute resolution."
+  },
+  {
+    "name": "Insurance Bonus Scam",
+    "description": "Caller claims you are eligible for bonus but need to pay 'activation charge' first."
+  },
+  {
+    "name": "Fake Social Media Verification",
+    "description": "Victim told page will be verified only after clicking malicious link."
+  },
+  {
+    "name": "Fake Scholarship Registration Scam",
+    "description": "Students asked to pay processing/registration fees for scholarship approval."
+  },
+  {
+    "name": "Fake Charity Donation Drive",
+    "description": "Fraudster requests donations to fake NGOs, especially during disasters."
+  },
+  {
+    "name": "Online Gaming Reward Scam",
+    "description": "Scammer promises game rewards or gems in exchange for UPI payment."
+  },
+  {
+    "name": "SIM Swap Fraud",
+    "description": "Attacker convinces telecom operator to issue a SIM replacement to intercept OTPs."
+  },
+  {
+    "name": "Bank Account Upgrade Scam",
+    "description": "Victim told account must be 'upgraded to premium/safe mode' via scam link."
+  },
+  {
+    "name": "Mutual Fund Redemption Scam",
+    "description": "Fraudster sends link asking users to redeem mutual funds to a fake portal."
+  },
+  {
+    "name": "Fake Aviation Parcel Delivery Scam",
+    "description": "Victim pays multiple charges after receiving a fake parcel claim from abroad."
+  },
+  {
+    "name": "Fake Police Legal Threat",
+    "description": "Threat message claims arrest is imminent unless fine or document fee is paid."
+  },
+  {
+    "name": "Fake Dating/Matchmaking Scam",
+    "description": "Scammer builds trust and then requests money citing emergencies or visa issues."
+  },
+  {
+    "name": "SIM KYC Expiry Scam",
+    "description": "Victim told SIM will stop working unless KYC is updated immediately through a link."
+  },
+  {
+    "name": "Loan Approval Fee Scam",
+    "description": "Loan approval message requests verification fee before disbursing loan."
+  },
+  {
+    "name": "Crypto Giveaway Scam",
+    "description": "User told they will receive crypto airdrop only after paying handling charges."
+  },
+  {
+    "name": "Fake Hospital Emergency Scam",
+    "description": "Someone claims a relative is hospitalized and asks for urgent money transfer."
+  },
+  {
+    "name": "AirBnB/Travel Booking Advance Scam",
+    "description": "Fake host takes advance payment for vacations and blocks the victim afterwards."
+  },
+  {
+    "name": "Gift Card Claim Scam",
+    "description": "Victim told they have won a gift and only need to pay 'delivery charges'."
+  },
+  {
+    "name": "Fake Subscription Cancellation Scam",
+    "description": "User told subscription renewal will be charged unless they click a scam link."
+  },
+  {
+    "name": "Remote Job Payroll Scam",
+    "description": "Scammer promises salaried WFH role but demands laptop/security deposit upfront."
+  },
+  {
+    "name": "WhatsApp Impersonation Fraud",
+    "description": "Attacker creates fake WhatsApp account pretending to be a known person and asks for money."
   }
 ]
-
