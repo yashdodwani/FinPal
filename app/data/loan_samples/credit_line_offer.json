@@ -1,0 +1,15 @@
+{
+  "loan_type": "Credit Line / BNPL",
+  "credit_limit": 25000,
+  "interest_rate": "0–24% depending on usage",
+  "late_fee": "₹100 per day after due date",
+  "processing_fee": "Zero",
+  "features": [
+    "No-cost EMI available",
+    "Repayment via UPI or auto-debit"
+  ],
+  "risks": [
+    "Hidden penal charges possible",
+    "Missed EMI can reduce credit score"
+  ]
+}

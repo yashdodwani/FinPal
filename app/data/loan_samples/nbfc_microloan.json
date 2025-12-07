@@ -1,0 +1,15 @@
+{
+  "loan_type": "NBFC Microfinance Loan",
+  "principal": 15000,
+  "interest_rate": "24% annual flat",
+  "processing_fee": "₹150",
+  "late_fee": "₹50 per week",
+  "tenure_months": 6,
+  "security": "Group guarantee",
+  "recovery_terms": "Staff must follow RBI’s Fair Practices Code — no coercive recovery.",
+  "disclosures": [
+    "Loan agreement given in local language",
+    "No hidden charges",
+    "No unauthorized data collection"
+  ]
+}

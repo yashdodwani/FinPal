@@ -19,6 +19,8 @@ from app.schemas import (
 from .policy_fetch import run_policy_fetch
 from .policy_summarizer import run_policy_summarizer
 from .policy_qa import run_policy_qa
+from .policy_fetch import run_policy_fetch
+
 
 
 async def run_policy_pipeline(request: PolicyQARequest) -> PolicyQAResponse:

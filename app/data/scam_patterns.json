@@ -6,6 +6,185 @@
   {
     "name": "Loan Fee Advance",
     "description": "Victim asked to pay processing fee upfront for a loan; then the lender disappears."
+  },
+  {
+    "name": "Fake UPI Refund Request",
+    "description": "Victim told they will get refund only if they send \u00e2\u201a\u00b91 first to verify account."
+  },
+  {
+    "name": "OTP Sharing Fraud",
+    "description": "Scammer tricks victim into sharing OTP claiming verification or job confirmation."
+  },
+  {
+    "name": "Job Offer Registration Scam",
+    "description": "Fraudster offers high-paying job and asks for registration or training fee upfront."
+  },
+  {
+    "name": "Courier Custom Charges Scam",
+    "description": "Fake courier alert claims parcel held at customs; asks for immediate payment."
+  },
+  {
+    "name": "Electricity Disconnection Threat",
+    "description": "Threat that power will be cut unless bill is paid or KYC updated immediately."
+  },
+  {
+    "name": "Income Tax Refund Phishing",
+    "description": "Victim told they are eligible for tax refund; scam link steals bank details."
+  },
+  {
+    "name": "Credit Limit Upgrade Scam",
+    "description": "Fake bank agent asks user to install remote access apps to increase credit limit."
+  },
+  {
+    "name": "PAN Card Blocking Threat",
+    "description": "Scammers claim PAN will be blocked if user doesn't verify details on scam link."
+  },
+  {
+    "name": "Online Marketplace Buyer Scam",
+    "description": "Fraudster pretends to buy product and sends fake QR code for receiving payment."
+  },
+  {
+    "name": "Online Marketplace Seller Scam",
+    "description": "Victim sends money to book an item but seller disappears after payment."
+  },
+  {
+    "name": "Fake Tech Support Remote Access",
+    "description": "Scammer pretends to be support and asks user to download remote control software."
+  },
+  {
+    "name": "Investment Multiplying Trick",
+    "description": "Victim told money will double instantly after transfer; no returns provided."
+  },
+  {
+    "name": "Fake Trading Platform",
+    "description": "Users invest in crypto/forex app that shows fake profits until withdrawal is refused."
+  },
+  {
+    "name": "Fake RBI/Bank Helpline Number",
+    "description": "Fake helpline number steals card details under the pretext of dispute resolution."
+  },
+  {
+    "name": "Insurance Bonus Scam",
+    "description": "Caller claims you are eligible for bonus but need to pay 'activation charge' first."
+  },
+  {
+    "name": "Fake Social Media Verification",
+    "description": "Victim told page will be verified only after clicking malicious link."
+  },
+  {
+    "name": "Fake Scholarship Registration Scam",
+    "description": "Students asked to pay processing/registration fees for scholarship approval."
+  },
+  {
+    "name": "Fake Charity Donation Drive",
+    "description": "Fraudster requests donations to fake NGOs, especially during disasters."
+  },
+  {
+    "name": "Online Gaming Reward Scam",
+    "description": "Scammer promises game rewards or gems in exchange for UPI payment."
+  },
+  {
+    "name": "SIM Swap Fraud",
+    "description": "Attacker convinces telecom operator to issue a SIM replacement to intercept OTPs."
+  },
+  {
+    "name": "Bank Account Upgrade Scam",
+    "description": "Victim told account must be 'upgraded to premium/safe mode' via scam link."
+  },
+  {
+    "name": "Mutual Fund Redemption Scam",
+    "description": "Fraudster sends link asking users to redeem mutual funds to a fake portal."
+  },
+  {
+    "name": "Fake Aviation Parcel Delivery Scam",
+    "description": "Victim pays multiple charges after receiving a fake parcel claim from abroad."
+  },
+  {
+    "name": "Fake Police Legal Threat",
+    "description": "Threat message claims arrest is imminent unless fine or document fee is paid."
+  },
+  {
+    "name": "Fake Dating/Matchmaking Scam",
+    "description": "Scammer builds trust and then requests money citing emergencies or visa issues."
+  },
+  {
+    "name": "SIM KYC Expiry Scam",
+    "description": "Victim told SIM will stop working unless KYC is updated immediately through a link."
+  },
+  {
+    "name": "Loan Approval Fee Scam",
+    "description": "Loan approval message requests verification fee before disbursing loan."
+  },
+  {
+    "name": "Crypto Giveaway Scam",
+    "description": "User told they will receive crypto airdrop only after paying handling charges."
+  },
+  {
+    "name": "Fake Hospital Emergency Scam",
+    "description": "Someone claims a relative is hospitalized and asks for urgent money transfer."
+  },
+  {
+    "name": "AirBnB/Travel Booking Advance Scam",
+    "description": "Fake host takes advance payment for vacations and blocks the victim afterwards."
+  },
+  {
+    "name": "Gift Card Claim Scam",
+    "description": "Victim told they have won a gift and only need to pay 'delivery charges'."
+  },
+  {
+    "name": "Fake Subscription Cancellation Scam",
+    "description": "User told subscription renewal will be charged unless they click a scam link."
+  },
+  {
+    "name": "Remote Job Payroll Scam",
+    "description": "Scammer promises salaried WFH role but demands laptop/security deposit upfront."
+  },
+  {
+    "name": "WhatsApp Impersonation Fraud",
+    "description": "Attacker creates fake WhatsApp account pretending to be a known person and asks for money."
+  },
+  {
+    "id": "47192b75-0b15-456b-8075-2677c8344649",
+    "scam_name": "N/A - Insufficient article content to determine specific scam",
+    "category": "other",
+    "channel": "OTT communication apps (e.g., WhatsApp, Telegram, Snapchat, Signal)",
+    "modus_operandi": "N/A - The provided article snippet describes a regulatory directive (SIM binding) rather than a specific scam modus operandi. The full article is needed to identify how this context might be exploited in a scam.",
+    "key_phrases": [],
+    "red_flags": [],
+    "recommended_user_action": "N/A - Insufficient article content to determine specific user actions related to a scam.",
+    "example_message": "N/A - Insufficient article content to provide an example scam message.",
+    "source_url": "https://economictimes.indiatimes.com/industry/telecom/telecom-policy/dot-mandates-sim-binding-for-whatsapp-telegram-and-other-ott-apps-to-check-online-fraud/articleshow/125662025.cms"
+  },
+  {
+    "id": "4883de79-ae5f-4d8f-a21c-6edfc7a57fc8",
+    "scam_name": "Digital Payment Fraud / Online Financial Scam",
+    "category": "other",
+    "channel": "Mobile applications (UPI, banking apps), SMS, Phone calls, Social Media, Email",
+    "modus_operandi": "Scammers impersonate bank officials, government agencies, or customer support. They create urgency or fear (e.g., 'account blocked,' 'KYC update required,' 'lottery win,' 'job offer'). They then trick victims into sharing OTPs, PINs, or downloading remote access apps, or directly transferring money to fraudulent accounts under false pretenses.",
+    "key_phrases": [
+      "OTP",
+      "KYC Update",
+      "Account Blocked",
+      "Verify your account",
+      "Click this link",
+      "Remote access app",
+      "Customer support",
+      "Refund",
+      "Prize money",
+      "Job offer",
+      "Urgent action required"
+    ],
+    "red_flags": [
+      "Unsolicited requests for sensitive financial information (OTP, PIN, CVV, passwords)",
+      "Pressure to act immediately or face negative consequences",
+      "Requests to download unknown apps or grant remote access",
+      "Promises of large sums of money for little effort (e.g., lottery, prize money)",
+      "Grammar/spelling mistakes or unprofessional language in communications",
+      "Sender's identity not matching official sources (e.g., generic email, suspicious phone number)",
+      "Requests to transfer money to an unknown account for 'verification' or 'fees'"
+    ],
+    "recommended_user_action": "Never share OTP, PIN, CVV, or passwords with anyone. Verify the identity of the caller/sender through official channels (e.g., bank's official website/helpline). Do not click on suspicious links. Do not download unknown apps. Report suspicious activity to your bank and cybercrime authorities immediately.",
+    "example_message": "Dear customer, your bank account will be blocked within 24 hours due to incomplete KYC. Please click on [malicious link] to update immediately or call our support at [fake number] to avoid account suspension. Do not ignore this urgent message.",
+    "source_url": "https://economictimes.indiatimes.com/tech/catalysts/deep-deceit-inside-indias-online-scam-economy/articleshow/125543840.cms"
   }
 ]
-

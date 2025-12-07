@@ -1,0 +1,15 @@
+{
+  "loan_type": "Personal Loan",
+  "principal": 50000,
+  "interest_rate": "14% annual reducing balance",
+  "processing_fee": "2% + GST",
+  "late_fee": "₹200 per missed EMI",
+  "tenure_months": 12,
+  "security": "Unsecured",
+  "recovery_terms": "No harassment, no third-party contact. As per RBI Fair Practices Code.",
+  "disclosures": [
+    "All charges listed upfront",
+    "Key Fact Statement provided",
+    "No access to contacts/gallery"
+  ]
+}

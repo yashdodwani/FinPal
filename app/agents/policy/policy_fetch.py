@@ -1,70 +1,64 @@
-"""
-Policy Fetch Agent
-------------------
+import json
+import requests
+from bs4 import BeautifulSoup
+from pathlib import Path
 
-For hackathon speed, this can:
-- Load a few static sample policies from code or JSON files, OR
-- Later be extended to call HTTP APIs / scrape RBI/SEBI.
+LOCAL_POLICY_FILE = Path("app/data/policies/rbi_sebi_policies.json")
 
-Right now, we just return a small hard-coded set of PolicyRawDocument objects
-you can tweak quickly.
-"""
+RBI_SOURCES = [
+    "https://www.rbi.org.in/Scripts/PublicationDraftReports.aspx?ID=1200",   # Digital Lending Guidelines
+    "https://www.rbi.org.in/commonman/english/scripts/Notification.aspx?Id=10585",  # Fraud Awareness
+]
 
-from typing import List
+def load_local_policies():
+    if LOCAL_POLICY_FILE.exists():
+        with open(LOCAL_POLICY_FILE, "r") as f:
+            return json.load(f)
+    return []
 
-from app.schemas import PolicyRawDocument
+
+def scrape_rbi_page(url):
+    """Fetch RBI text content from a URL safely."""
+    try:
+        resp = requests.get(url, timeout=8)
+        resp.raise_for_status()
+        soup = BeautifulSoup(resp.text, "html.parser")
+        text = soup.get_text(separator="\n")
+        return text[:5000]  # Limit text to avoid token explosion
+    except Exception as e:
+        print(f"[policy_fetch] Failed to fetch RBI page {url}: {e}")
+        return None
 
 
-async def run_policy_fetch() -> List[PolicyRawDocument]:
+def fetch_live_rbi_guidelines():
+    results = []
+    for url in RBI_SOURCES:
+        content = scrape_rbi_page(url)
+        if content:
+            results.append({
+                "source": url,
+                "content": content
+            })
+    return results
+
+
+def fetch_all_policies():
+    """Main function called by policy_summarizer & policy_qa."""
+    local = load_local_policies()
+    remote = fetch_live_rbi_guidelines()
+
+    combined = []
+
+    for rule in local:
+        combined.append({"source": "local", "content": rule})
+
+    for item in remote:
+        combined.append(item)
+
+    return combined
+def run_policy_fetch():
     """
-    Return a small list of raw policy/regulation texts.
-
-    In a real system, this would:
-    - fetch from RBI/SEBI/NPCI websites
-    - load from JSON files in app/data/policies
-    - run cleaning/normalization
-
-    For the hackathon, these 2–3 examples are enough to show functionality.
+    Backwards-compatible wrapper used by pipeline.py.
+    Returns combined local + remote policy docs.
     """
-
-    docs: List[PolicyRawDocument] = [
-        PolicyRawDocument(
-            id="rbi_upi_fraud_reporting",
-            source="RBI",
-            title="UPI Fraud Reporting Timelines",
-            url=None,
-            raw_text=(
-                "If a customer reports an unauthorised electronic transaction to the bank "
-                "within three working days, and the customer has not shared credentials "
-                "knowingly or acted fraudulently, the customer shall bear zero liability. "
-                "If the report is made after three days but within seven working days, "
-                "the customer's liability shall be limited to the transaction value or "
-                "the value defined by RBI guidelines, whichever is lower."
-            ),
-        ),
-        PolicyRawDocument(
-            id="upi_never_share_otp_pin",
-            source="NPCI",
-            title="UPI OTP / PIN Safety Guidelines",
-            url=None,
-            raw_text=(
-                "Customers must never share their UPI PIN, OTP, or full card details with "
-                "anyone, including people claiming to be from the bank, RBI, or support. "
-                "Banks and official institutions will never ask for PIN, OTP, or full passwords "
-                "over phone, SMS, email, or chat."
-            ),
-        ),
-        PolicyRawDocument(
-            id="digital_lending_charges_transparency",
-            source="RBI",
-            title="Digital Lending – Charges and Transparency",
-            url=None,
-            raw_text=(
-                "All digital lenders must clearly disclose the annual percentage rate (APR), "
-                "all fees, charges, and penalties before execution of the loan contract. "
-                "Hidden charges or undisclosed fees are not permitted under RBI digital lending guidelines."
-            ),
-        ),
-    ]
-
-    return docs
+    return fetch_all_policies()

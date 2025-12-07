@@ -1,4 +1,11 @@
-Identify recurring scam patterns and features.
-
-TODO: Provide taxonomy.
-
+Extract a generalized scam pattern from this article and return ONLY JSON:
+{
+  "scam_name": "",
+  "channel": "",
+  "modus_operandi": "",
+  "key_phrases": [],
+  "red_flags": [],
+  "recommended_user_action": "",
+  "example_message": ""
+}
+No extra words outside the JSON.

@@ -1,4 +1,8 @@
-Generate clear, actionable educational guidance.
-
-TODO: Add style cues.
-
+Generate a simple explanation of the result using friendly, non-technical language.
+Return ONLY JSON:
+{
+  "short_warning": "",
+  "detailed_explanation": [],
+  "what_to_do_now": []
+}
+DO NOT mention the numerical risk score.

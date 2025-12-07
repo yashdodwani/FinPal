@@ -1,0 +1,18 @@
+{
+  "loan_type": "High Risk Payday Loan",
+  "principal": 5000,
+  "interest_rate": "36–50% annual + daily penalties",
+  "processing_fee": "₹500 upfront",
+  "late_fee": "₹900 per day",
+  "tenure_days": 7,
+  "illegal_clauses": [
+    "Threatening to call contacts",
+    "Asking for gallery access",
+    "Coercive repayment practices"
+  ],
+  "common_signs_of_scam": [
+    "App not RBI-registered",
+    "Demands UPI PIN or OTP",
+    "Extremely high daily charges"
+  ]
+}
