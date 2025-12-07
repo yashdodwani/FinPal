@@ -13,6 +13,7 @@ def fetch_latest_scams():
         cleaned.append({
             "headline": a.get("title"),
             "raw_text": a.get("content") or a.get("description") or "",
-            "published": datetime.datetime.utcnow().isoformat()
+            "published": datetime.datetime.utcnow().isoformat(),
+            "url": a.get("url")
         })
     return cleaned

@@ -1,28 +1,33 @@
 import json
-import google.generativeai as genai
-import os
+import json
 from pathlib import Path
 from app.schemas.scam import ScamAnalysisResult
-
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+from app.core.gemini import run_gemini
 
 EDUCATOR_PROMPT_PATH = Path(__file__).parent / "prompts" / "educator_prompt.txt"
 with open(EDUCATOR_PROMPT_PATH) as f:
     EDUCATOR_PROMPT = f.read()
 
 
-def enrich_explanation(result: ScamAnalysisResult) -> ScamAnalysisResult:
+async def enrich_explanation(result: ScamAnalysisResult) -> ScamAnalysisResult:
     """
     Calls LLM only to improve explanation — does NOT change risk score or classification.
     """
-    model = genai.GenerativeModel("gemini-2.0-pro")
     prompt = EDUCATOR_PROMPT + "\n\nDATA:\n" + json.dumps(result.model_dump())
-    llm_out = model.generate_content(prompt).text
-
+    
+    payload = {
+        "system_instruction": "You are a helpful financial safety educator.",
+        "user": {"text": prompt}
+    }
+    
     try:
-        update = json.loads(llm_out)
-    except:
+        update = await run_gemini(payload)
+    except Exception:
         return result  # fallback
+
+    # Result is already a dict from run_gemini
+    if not isinstance(update, dict):
+        return result
 
     result.short_warning = update.get("short_warning", result.short_warning)
     result.detailed_explanation = update.get("detailed_explanation", result.detailed_explanation)

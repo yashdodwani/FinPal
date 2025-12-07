@@ -1,13 +1,10 @@
-import os
 import json
 import uuid
-import google.generativeai as genai
+from pathlib import Path
+from app.schemas.scam import ScamPattern, ScamCategory
+from app.core.gemini import run_gemini
 
-from schemas.scam import ScamPattern, ScamCategory
-
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-
-PATTERN_PROMPT_PATH = "scam/prompts/pattern_prompt.txt"
+PATTERN_PROMPT_PATH = Path(__file__).parent / "prompts" / "pattern_prompt.txt"
 with open(PATTERN_PROMPT_PATH) as f:
     PATTERN_PROMPT = f.read()
 
@@ -23,16 +20,21 @@ def _guess_category(name: str) -> ScamCategory:
     return ScamCategory.OTHER
 
 
-def extract_patterns(articles):
-    model = genai.GenerativeModel("gemini-2.0-pro")
+async def extract_patterns(articles):
     patterns = []
 
     for article in articles:
         prompt = PATTERN_PROMPT + "\n\nARTICLE:\n" + article["raw_text"]
-        out = model.generate_content(prompt).text
-
+        
+        payload = {
+            "system_instruction": "You are a scam pattern extractor.",
+            "user": {"text": prompt}
+        }
+        
         try:
-            src = json.loads(out)
+            src = await run_gemini(payload)
+            if not isinstance(src, dict) or "scam_name" not in src:
+                continue
         except:
             continue
 
@@ -54,9 +56,10 @@ def extract_patterns(articles):
 
 
 def save_patterns(patterns):
-    db = "backend/database/patterns.json"
+    # app/agents/scam/pattern_extractor.py -> app/data/scam_patterns.json
+    db = Path(__file__).resolve().parents[2] / "data" / "scam_patterns.json"
     with open(db, "r+") as f:
         stored = json.load(f)
-        stored.extend([p.model_dump() for p in patterns])
+        stored.extend([p.model_dump(mode='json') for p in patterns])
         f.seek(0)
         json.dump(stored, f, indent=2)

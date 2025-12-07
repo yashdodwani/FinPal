@@ -136,3 +136,23 @@ class ScamAnalysisResult(BaseModel):
         default_factory=list,
         description="More detailed bullet points educating the user about this scam type.",
     )
+
+
+class ScamArticle(BaseModel):
+    """
+    A raw news article fetched from the web.
+    """
+    headline: Optional[str] = None
+    raw_text: str
+    published: str
+    url: Optional[str] = None
+
+
+class HarvestResponse(BaseModel):
+    """
+    Response from the scam harvesting endpoint.
+    """
+    articles_found: int
+    patterns_extracted: int
+    patterns: List[ScamPattern]
+    articles: List[ScamArticle]
