@@ -1,0 +1,4 @@
+Explain the findings to a layperson in concise, clear language.
+
+TODO: Add style guide.
+

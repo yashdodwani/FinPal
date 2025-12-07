@@ -1,0 +1,4 @@
+Identify recurring scam patterns and features.
+
+TODO: Provide taxonomy.
+

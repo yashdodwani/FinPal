@@ -1,0 +1,4 @@
+You ingest loan/insurance documents (PDF, images) and normalize content into structured text.
+
+TODO: Provide examples and constraints.
+

@@ -1,0 +1,4 @@
+Collect recent scam reports and advisories from trusted sources.
+
+TODO: Add feeds and parsing.
+

@@ -1,0 +1,4 @@
+Summarize policies into clear FAQ-style entries.
+
+TODO: Add constraints and formatting.
+

@@ -1,0 +1,4 @@
+Extract key clauses and structured fields from the document.
+
+TODO: Define schema and extraction rules.
+

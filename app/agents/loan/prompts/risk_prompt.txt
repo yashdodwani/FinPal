@@ -1,0 +1,4 @@
+Assess risk based on extracted clauses and user profile.
+
+TODO: Provide scoring rubric.
+

@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+
+# Environments
+.env
+.venv/
+venv/
+ENV/
+
+# Editors/OS
+.DS_Store
+.idea/
+.vscode/
+
+# Byte-compiled / cached / logs
+*.log
+

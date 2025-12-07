@@ -1,0 +1,4 @@
+Analyze risk for a given scenario.
+
+TODO: Add scoring framework.
+

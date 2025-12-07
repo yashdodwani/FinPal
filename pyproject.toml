@@ -1,0 +1,6 @@
+[project]
+name = "FinPal"
+version = "0.0.1"
+description = "Multi-agent FastAPI backend skeleton"
+requires-python = ">=3.9"
+

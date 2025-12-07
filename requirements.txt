@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+httpx
+pydantic
+python-dotenv
+SQLAlchemy>=2.0
+asyncpg
+pytest
+
