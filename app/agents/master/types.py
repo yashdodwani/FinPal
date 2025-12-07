@@ -1,13 +1,14 @@
-"""Types for master router agent."""
-from enum import Enum
-from pydantic import BaseModel
+"""
+Type models specific to the master routing agent.
+"""
 
-class MasterRoute(str, Enum):
-    scam = "scam"
-    loan = "loan"
-    policy = "policy"
+from pydantic import BaseModel, Field
+from app.schemas.common import RouteEnum
 
-class RoutedPayload(BaseModel):
-    route: MasterRoute
-    payload: dict | None = None
 
+class RouterDecision(BaseModel):
+    """
+    Clean structured output from the router LLM.
+    """
+    route: RouteEnum = Field(..., description="Chosen high-level route.")
+    reason: str = Field(..., description="Short explanation why this route was selected.")
