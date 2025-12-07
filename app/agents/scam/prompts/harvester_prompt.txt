@@ -1,4 +1,2 @@
-Collect recent scam reports and advisories from trusted sources.
-
-TODO: Add feeds and parsing.
-
+You extract raw scam-related digital payment news articles.
+Return ONLY cleaned text content, no commentary or metadata.

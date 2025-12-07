@@ -1,14 +1,7 @@
 """
 Master Router Agent
 -------------------
-
-This agent receives a UserRequest and determines which pipeline
-to execute: Scam, Loan, or Policy.
-
-It uses:
-- Optional route_hint from the UserRequest
-- LLM-based intent classification (router_prompt.txt)
-- Returns a unified AgentResponse
+Receives a UserRequest and determines which pipeline to execute.
 """
 
 from typing import Dict, Any
@@ -34,56 +27,39 @@ ROUTER_PROMPT_PATH = "app/agents/master/router_prompt.txt"
 
 
 async def load_router_prompt() -> str:
-    """Load router system prompt from file."""
     with open(ROUTER_PROMPT_PATH, "r") as f:
         return f.read()
 
 
 async def classify_route(user_req: UserRequest) -> RouterDecision:
-    """
-    Uses Gemini to classify the user's intent.
-    Returns a RouterDecision(route: RouteEnum, reason: str).
-    """
-
     prompt = await load_router_prompt()
-
     llm_input = {
         "system_instruction": prompt,
-        "user": {
-            "text": user_req.text,
-            "metadata": user_req.metadata,
-        },
+        "user": {"text": user_req.text, "metadata": user_req.metadata},
     }
-
     llm_output = await run_gemini(llm_input)
-
     try:
-        parsed = RouterDecision.model_validate(llm_output)  # ensures type safety
-        return parsed
+        return RouterDecision.model_validate(llm_output)
     except Exception as e:
         raise ValueError(f"RouterDecision parsing failed: {e}")
 
 
 async def route_request(user_req: UserRequest) -> AgentResponse:
-    """
-    Main entry point.
-    1. Uses route_hint if provided.
-    2. Otherwise calls classify_route().
-    3. Calls the appropriate pipeline.
-    """
-
     try:
-        # 1. Use user-provided hint if available
+        # 1 — Use route_hint if available
         if user_req.route_hint:
             final_route = user_req.route_hint
             reason = "Used route_hint"
         else:
-            # 2. Otherwise classify with LLM
+            # 2 — Predict route if no hint
             decision = await classify_route(user_req)
             final_route = decision.route
             reason = decision.reason
 
-        # 3. Dispatch pipeline
+        # Normalize metadata to avoid attribute errors
+        meta = user_req.metadata or {}
+
+        # 3 — Dispatch to pipelines
         if final_route == RouteEnum.LOAN_DOC:
             payload = LoanIngestionRequest(
                 language=user_req.language,
@@ -102,9 +78,9 @@ async def route_request(user_req: UserRequest) -> AgentResponse:
             payload = ScamAnalysisRequest(
                 text=user_req.text or "",
                 language=user_req.language,
-                url=user_req.metadata.get("url"),
-                upi_id=user_req.metadata.get("upi_id"),
-                channel=user_req.metadata.get("channel"),
+                url=meta.get("url"),
+                upi_id=meta.get("upi_id"),
+                channel=meta.get("channel"),
             )
             result = await run_scam_pipeline(payload)
 
@@ -116,7 +92,6 @@ async def route_request(user_req: UserRequest) -> AgentResponse:
                 debug_info={"reason": reason},
             )
 
-        # Success
         return AgentResponse(
             final_route=final_route,
             data=result,
@@ -124,7 +99,6 @@ async def route_request(user_req: UserRequest) -> AgentResponse:
         )
 
     except Exception as e:
-        # Catch-all failure
         return AgentResponse(
             final_route=user_req.route_hint or RouteEnum.SCAM_CHECK,
             data=None,
