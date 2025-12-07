@@ -23,7 +23,7 @@ client = genai.Client(api_key=GEMINI_API_KEY)
 # Gemini 3 Model Identifier
 # (Ensure this matches the exact string in Google AI Studio,
 # e.g., 'gemini-3-pro-preview' or 'gemini-experimental')
-MODEL = "gemini-3-pro-preview"
+MODEL = "gemini-2.5-flash"
 
 async def run_gemini(payload: dict) -> dict:
     """
