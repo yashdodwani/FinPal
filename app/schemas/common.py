@@ -19,6 +19,7 @@ class RouteEnum(str, Enum):
     SCAM_CHECK = "SCAM_CHECK"
     LOAN_DOC = "LOAN_DOC"
     POLICY_QA = "POLICY_QA"
+    HONEYPOT = "HONEYPOT"  # Silent scam engagement mode
 
 
 class AgentError(BaseModel):

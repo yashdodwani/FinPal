@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinPal - Financial Safety Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00d9ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            color: #888;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+
+        .nav-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.1);
+            border-color: #00d9ff;
+            box-shadow: 0 20px 40px rgba(0,217,255,0.1);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #888;
+            line-height: 1.6;
+        }
+
+        .card-scam .card-icon { color: #ff6b6b; }
+        .card-loan .card-icon { color: #4ecdc4; }
+        .card-policy .card-icon { color: #ffe66d; }
+        .card-honeypot .card-icon { color: #ff9f43; }
+
+        .status-bar {
+            margin-top: 50px;
+            padding: 20px;
+            background: rgba(0,255,136,0.1);
+            border: 1px solid rgba(0,255,136,0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .api-url {
+            color: #888;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #555;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🛡️ FinPal</div>
+            <p class="tagline">Your AI-Powered Financial Safety Assistant</p>
+        </header>
+
+        <div class="nav-cards">
+            <a href="scam-checker.html" class="card card-scam">
+                <div class="card-icon">🚨</div>
+                <h2>Scam Checker</h2>
+                <p>Analyze suspicious messages, SMS, or WhatsApp texts for potential scam indicators. Get instant risk assessment.</p>
+            </a>
+
+            <a href="loan-analyzer.html" class="card card-loan">
+                <div class="card-icon">📄</div>
+                <h2>Loan Analyzer</h2>
+                <p>Upload loan documents to extract key terms, identify hidden fees, and get risk scoring with plain-language explanations.</p>
+            </a>
+
+            <a href="policy-qa.html" class="card card-policy">
+                <div class="card-icon">📚</div>
+                <h2>Policy Q&A</h2>
+                <p>Ask questions about RBI/SEBI regulations, UPI limits, fraud reporting procedures, and financial rules.</p>
+            </a>
+
+            <a href="honeypot.html" class="card card-honeypot">
+                <div class="card-icon">🍯</div>
+                <h2>Honeypot Demo</h2>
+                <p>Test the agentic honeypot system. Simulate scammer conversations and see intelligence extraction in action.</p>
+            </a>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-dot"></div>
+            <span>Backend Status: Connected</span>
+            <span class="api-url">| API: http://localhost:8000</span>
+        </div>
+
+        <footer>
+            <p>FinPal - Built for Financial Safety & Literacy</p>
+        </footer>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+
+        // Check backend health
+        async function checkHealth() {
+            const statusBar = document.querySelector('.status-bar');
+            const statusDot = document.querySelector('.status-dot');
+            
+            try {
+                const response = await fetch(`${API_BASE}/health`, { 
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                if (response.ok) {
+                    statusBar.style.background = 'rgba(0,255,136,0.1)';
+                    statusBar.style.borderColor = 'rgba(0,255,136,0.3)';
+                    statusDot.style.background = '#00ff88';
+                    statusBar.querySelector('span').textContent = 'Backend Status: Connected';
+                }
+            } catch (error) {
+                statusBar.style.background = 'rgba(255,107,107,0.1)';
+                statusBar.style.borderColor = 'rgba(255,107,107,0.3)';
+                statusDot.style.background = '#ff6b6b';
+                statusDot.style.animation = 'none';
+                statusBar.querySelector('span').textContent = 'Backend Status: Disconnected';
+            }
+        }
+
+        // Check health on load and periodically
+        checkHealth();
+        setInterval(checkHealth, 30000);
+    </script>
+</body>
+</html>

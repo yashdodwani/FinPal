@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Policy Q&A - FinPal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            color: #00d9ff;
+            text-decoration: none;
+            font-size: 1.5rem;
+        }
+
+        .title {
+            font-size: 1.8rem;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+
+        .chat-container {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 200px);
+            min-height: 500px;
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            color: #9b59b6;
+        }
+
+        .policy-badge {
+            background: rgba(155,89,182,0.2);
+            border: 1px solid #9b59b6;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #9b59b6;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 15px 20px;
+            border-radius: 16px;
+            line-height: 1.6;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-user {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-bot {
+            background: rgba(255,255,255,0.1);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-label {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .source-tag {
+            display: inline-block;
+            background: rgba(155,89,182,0.2);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-top: 10px;
+            color: #9b59b6;
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 25px;
+            padding: 15px 25px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #9b59b6;
+        }
+
+        .send-btn {
+            background: linear-gradient(90deg, #9b59b6, #8e44ad);
+            border: none;
+            border-radius: 25px;
+            padding: 15px 30px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .send-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Suggestions */
+        .suggestions {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .suggestion-chip {
+            background: rgba(155,89,182,0.1);
+            border: 1px solid rgba(155,89,182,0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #ccc;
+        }
+
+        .suggestion-chip:hover {
+            background: rgba(155,89,182,0.3);
+            border-color: #9b59b6;
+            color: #fff;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .typing-indicator.visible {
+            display: block;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: #9b59b6;
+            border-radius: 50%;
+            animation: bounce 1s infinite;
+        }
+
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+        }
+
+        .welcome-message h4 {
+            color: #9b59b6;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .welcome-message p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .topic-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .topic-card {
+            background: rgba(155,89,182,0.1);
+            border: 1px solid rgba(155,89,182,0.2);
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .topic-card:hover {
+            background: rgba(155,89,182,0.2);
+            border-color: #9b59b6;
+            transform: translateY(-2px);
+        }
+
+        .topic-card .icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .topic-card .label {
+            font-size: 0.85rem;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-btn">←</a>
+            <div>
+                <h1 class="title">📜 Policy Q&A</h1>
+                <p class="subtitle">Ask questions about RBI, SEBI & financial regulations</p>
+            </div>
+        </header>
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <h3>🤖 Policy Assistant</h3>
+                <span class="policy-badge">RBI • SEBI • IRDAI</span>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+                <div class="welcome-message" id="welcome">
+                    <h4>Welcome to Policy Q&A</h4>
+                    <p>I can help you understand Indian financial regulations, RBI guidelines, SEBI rules, and consumer protection policies.</p>
+                    
+                    <div class="topic-cards">
+                        <div class="topic-card" onclick="askQuestion('What are RBI rules on digital lending?')">
+                            <div class="icon">🏦</div>
+                            <div class="label">Digital Lending</div>
+                        </div>
+                        <div class="topic-card" onclick="askQuestion('What are KYC requirements for bank accounts?')">
+                            <div class="icon">📋</div>
+                            <div class="label">KYC Norms</div>
+                        </div>
+                        <div class="topic-card" onclick="askQuestion('How to file complaint against fraudulent apps?')">
+                            <div class="icon">⚖️</div>
+                            <div class="label">Complaints</div>
+                        </div>
+                        <div class="topic-card" onclick="askQuestion('What is the UPI transaction limit?')">
+                            <div class="icon">💳</div>
+                            <div class="label">UPI Limits</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typing-indicator">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+
+            <div class="suggestions" id="suggestions">
+                <span class="suggestion-chip" onclick="askQuestion('What is max interest rate for microfinance?')">Microfinance rates</span>
+                <span class="suggestion-chip" onclick="askQuestion('How to report a cyber fraud?')">Report fraud</span>
+                <span class="suggestion-chip" onclick="askQuestion('Are loan apps regulated by RBI?')">Loan app rules</span>
+            </div>
+
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chat-input" 
+                       placeholder="Ask about financial policies..." 
+                       onkeypress="if(event.key==='Enter') sendMessage()">
+                <button class="send-btn" id="send-btn" onclick="sendMessage()">Ask</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        let conversationStarted = false;
+
+        function askQuestion(question) {
+            document.getElementById('chat-input').value = question;
+            sendMessage();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Remove welcome message on first question
+            if (!conversationStarted) {
+                document.getElementById('welcome').remove();
+                conversationStarted = true;
+            }
+
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+
+            // Show typing
+            document.getElementById('typing-indicator').classList.add('visible');
+            document.getElementById('send-btn').disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/guardian`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: message,
+                        route_hint: 'POLICY_QA',
+                        language: 'en'
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Simulate reading delay
+                await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
+                
+                document.getElementById('typing-indicator').classList.remove('visible');
+
+                // Extract answer
+                let answer = 'I couldn\'t find specific information on that topic.';
+                let source = null;
+
+                if (data.payload) {
+                    if (data.payload.answer) {
+                        answer = data.payload.answer;
+                    } else if (data.payload.summary) {
+                        answer = data.payload.summary;
+                    } else if (data.payload.response) {
+                        answer = data.payload.response;
+                    }
+                    
+                    if (data.payload.source || data.payload.sources) {
+                        source = data.payload.source || data.payload.sources;
+                    }
+                } else if (data.message) {
+                    answer = data.message;
+                }
+
+                addMessage(answer, 'bot', source);
+                updateSuggestions(message);
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('typing-indicator').classList.remove('visible');
+                addMessage('Error connecting to the server. Please make sure the backend is running.', 'bot');
+            } finally {
+                document.getElementById('send-btn').disabled = false;
+            }
+        }
+
+        function addMessage(text, type, source = null) {
+            const messagesContainer = document.getElementById('chat-messages');
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message message-${type}`;
+            
+            let html = '';
+            if (type === 'user') {
+                html = `<div class="message-label">You</div><div>${text}</div>`;
+            } else {
+                html = `<div class="message-label">🤖 Policy Assistant</div><div>${formatResponse(text)}</div>`;
+                if (source) {
+                    const sourceText = Array.isArray(source) ? source.join(', ') : source;
+                    html += `<div class="source-tag">📖 Source: ${sourceText}</div>`;
+                }
+            }
+            
+            messageDiv.innerHTML = html;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function formatResponse(text) {
+            // Convert markdown-style formatting
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function updateSuggestions(lastQuestion) {
+            const suggestions = document.getElementById('suggestions');
+            const lowerQ = lastQuestion.toLowerCase();
+            
+            let newSuggestions = [];
+            
+            if (lowerQ.includes('lending') || lowerQ.includes('loan')) {
+                newSuggestions = [
+                    'What is the cooling-off period for loans?',
+                    'Can loan apps access my contacts?',
+                    'How to check if lender is RBI registered?'
+                ];
+            } else if (lowerQ.includes('fraud') || lowerQ.includes('scam')) {
+                newSuggestions = [
+                    'What is cyber crime helpline number?',
+                    'Can I get refund for fraud transaction?',
+                    'How long does fraud investigation take?'
+                ];
+            } else if (lowerQ.includes('upi') || lowerQ.includes('payment')) {
+                newSuggestions = [
+                    'Can UPI transaction be reversed?',
+                    'What is NPCI complaint process?',
+                    'Are UPI payments insured?'
+                ];
+            } else {
+                newSuggestions = [
+                    'What are my rights as a borrower?',
+                    'How to file complaint with banking ombudsman?',
+                    'What is SARFAESI Act?'
+                ];
+            }
+            
+            suggestions.innerHTML = newSuggestions.map(s => 
+                `<span class="suggestion-chip" onclick="askQuestion('${s}')">${s}</span>`
+            ).join('');
+        }
+
+        // Focus input on load
+        document.getElementById('chat-input').focus();
+    </script>
+</body>
+</html>

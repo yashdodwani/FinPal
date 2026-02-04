@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Honeypot Demo - FinPal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            color: #00d9ff;
+            text-decoration: none;
+            font-size: 1.5rem;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+        }
+
+        @media (max-width: 1000px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Chat Section */
+        .chat-section {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            height: 70vh;
+            min-height: 500px;
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            color: #ff9f43;
+        }
+
+        .session-info {
+            font-size: 0.8rem;
+            color: #666;
+            font-family: monospace;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            line-height: 1.5;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-scammer {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-honeypot {
+            background: linear-gradient(135deg, #00d9ff, #0099cc);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 25px;
+            padding: 12px 20px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #ff9f43;
+        }
+
+        .send-btn {
+            background: linear-gradient(90deg, #ff9f43, #ff6b6b);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .send-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Intelligence Panel */
+        .intel-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .intel-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .intel-card h4 {
+            color: #ff9f43;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .intel-item {
+            background: rgba(0,0,0,0.2);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+
+        .intel-item.empty {
+            color: #666;
+            font-style: italic;
+        }
+
+        .stage-indicator {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .stage {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            font-size: 0.7rem;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .stage.active {
+            background: rgba(255,159,67,0.3);
+            color: #ff9f43;
+            border: 1px solid #ff9f43;
+        }
+
+        .stage.completed {
+            background: rgba(0,255,136,0.2);
+            color: #00ff88;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .control-btn.danger {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .control-btn.danger:hover {
+            background: rgba(255,107,107,0.2);
+        }
+
+        /* Example Scam Messages */
+        .examples-panel {
+            background: rgba(255,107,107,0.1);
+            border: 1px solid rgba(255,107,107,0.3);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .examples-panel h5 {
+            color: #ff6b6b;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+        }
+
+        .example-msg {
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .example-msg:hover {
+            background: rgba(0,0,0,0.4);
+            border-color: #ff6b6b;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .status-badge.active {
+            background: rgba(0,255,136,0.2);
+            color: #00ff88;
+        }
+
+        .status-badge.ended {
+            background: rgba(255,107,107,0.2);
+            color: #ff6b6b;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 12px 18px;
+            background: rgba(0,217,255,0.2);
+            border-radius: 18px;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .typing-indicator.visible {
+            display: block;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: #00d9ff;
+            border-radius: 50%;
+            animation: typing 1s infinite;
+        }
+
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-btn">←</a>
+            <h1 class="title">🍯 Honeypot Demo</h1>
+            <span class="status-badge active" id="status-badge">
+                <span>●</span> Active
+            </span>
+        </header>
+
+        <div class="main-content">
+            <!-- Chat Section -->
+            <div class="chat-section">
+                <div class="chat-header">
+                    <h3>🎭 Scammer Simulation</h3>
+                    <span class="session-info" id="session-info">Session: -</span>
+                </div>
+
+                <div class="chat-messages" id="chat-messages">
+                    <div style="text-align: center; color: #666; padding: 20px;">
+                        <p>Type a scam message to start the simulation.</p>
+                        <p style="font-size: 0.8rem; margin-top: 10px;">
+                            You play the role of a scammer. The AI will respond as a confused victim.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="typing-indicator" id="typing-indicator">
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" id="chat-input" 
+                           placeholder="Type scam message as the scammer..." 
+                           onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button class="send-btn" id="send-btn" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+
+            <!-- Intelligence Panel -->
+            <div class="intel-section">
+                <div class="intel-card">
+                    <h4>📊 Session Status</h4>
+                    <div class="stage-indicator">
+                        <div class="stage active" id="stage-init">INIT</div>
+                        <div class="stage" id="stage-trust">TRUST</div>
+                        <div class="stage" id="stage-extract">EXTRACT</div>
+                        <div class="stage" id="stage-exit">EXIT</div>
+                    </div>
+                    <div style="margin-top: 15px; color: #888; font-size: 0.85rem;">
+                        <p>Messages: <span id="msg-count">0</span></p>
+                        <p>Persona: <span id="persona-name">-</span></p>
+                    </div>
+                </div>
+
+                <div class="intel-card">
+                    <h4>🔍 Extracted Intelligence</h4>
+                    <div id="intel-content">
+                        <div class="intel-item empty">No intelligence extracted yet</div>
+                    </div>
+                </div>
+
+                <div class="intel-card">
+                    <h4>⚙️ Controls</h4>
+                    <div class="controls">
+                        <button class="control-btn" onclick="newSession()">🔄 New Session</button>
+                        <button class="control-btn" onclick="checkStatus()">📋 Check Status</button>
+                        <button class="control-btn danger" onclick="endSession()">🛑 End Session</button>
+                    </div>
+                </div>
+
+                <div class="examples-panel">
+                    <h5>💀 Example Scam Messages (click to use)</h5>
+                    <div class="example-msg" onclick="useExample(this)">
+                        Hello sir, I am calling from SBI Bank. Your account has been blocked due to KYC issue. Please share your OTP to unblock.
+                    </div>
+                    <div class="example-msg" onclick="useExample(this)">
+                        Congratulations! You won Rs.5 lakh lottery. Pay Rs.5000 processing fee to this UPI: winner@ybl
+                    </div>
+                    <div class="example-msg" onclick="useExample(this)">
+                        Your UPI payment of Rs.25000 failed. Click http://bit.ly/refund123 and enter card details for refund.
+                    </div>
+                    <div class="example-msg" onclick="useExample(this)">
+                        Sir, please install AnyDesk app immediately. I will help you fix your account issue. Very urgent!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        let sessionId = generateSessionId();
+        let messageCount = 0;
+        let sessionEnded = false;
+
+        // Initialize
+        document.getElementById('session-info').textContent = `Session: ${sessionId.substring(0, 8)}...`;
+
+        function generateSessionId() {
+            return 'sess_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+        }
+
+        function useExample(el) {
+            document.getElementById('chat-input').value = el.textContent.trim();
+            document.getElementById('chat-input').focus();
+        }
+
+        function newSession() {
+            sessionId = generateSessionId();
+            messageCount = 0;
+            sessionEnded = false;
+            document.getElementById('session-info').textContent = `Session: ${sessionId.substring(0, 8)}...`;
+            document.getElementById('chat-messages').innerHTML = `
+                <div style="text-align: center; color: #666; padding: 20px;">
+                    <p>New session started. Type a scam message to begin.</p>
+                </div>
+            `;
+            document.getElementById('intel-content').innerHTML = '<div class="intel-item empty">No intelligence extracted yet</div>';
+            document.getElementById('msg-count').textContent = '0';
+            document.getElementById('persona-name').textContent = '-';
+            updateStage('INIT');
+            document.getElementById('status-badge').className = 'status-badge active';
+            document.getElementById('status-badge').innerHTML = '<span>●</span> Active';
+            document.getElementById('send-btn').disabled = false;
+        }
+
+        async function sendMessage() {
+            if (sessionEnded) {
+                alert('Session has ended. Start a new session to continue.');
+                return;
+            }
+
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Add scammer message to chat
+            addMessage(message, 'scammer');
+            input.value = '';
+            messageCount++;
+            document.getElementById('msg-count').textContent = messageCount;
+
+            // Show typing indicator
+            const typingIndicator = document.getElementById('typing-indicator');
+            typingIndicator.classList.add('visible');
+            document.getElementById('send-btn').disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/honeypot`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        text: message,
+                        language: 'en'
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Simulate typing delay
+                await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 1200));
+                
+                typingIndicator.classList.remove('visible');
+
+                if (data.reply) {
+                    addMessage(data.reply, 'honeypot');
+                    messageCount++;
+                    document.getElementById('msg-count').textContent = messageCount;
+                }
+
+                // Check session status
+                await checkStatus();
+
+            } catch (error) {
+                console.error('Error:', error);
+                typingIndicator.classList.remove('visible');
+                addMessage('Error connecting to server', 'system');
+            } finally {
+                document.getElementById('send-btn').disabled = false;
+            }
+        }
+
+        function addMessage(text, type) {
+            const messagesContainer = document.getElementById('chat-messages');
+            
+            // Clear placeholder if exists
+            const placeholder = messagesContainer.querySelector('div[style*="text-align: center"]');
+            if (placeholder) placeholder.remove();
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message message-${type}`;
+            
+            const label = type === 'scammer' ? '🎭 Scammer' : '🎯 Honeypot (Victim)';
+            messageDiv.innerHTML = `
+                <div class="message-label">${label}</div>
+                <div>${text}</div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        async function checkStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/honeypot/status/${sessionId}`);
+                
+                if (response.status === 404) {
+                    return; // Session not found yet
+                }
+                
+                const data = await response.json();
+                
+                // Update persona
+                if (data.persona) {
+                    document.getElementById('persona-name').textContent = data.persona;
+                }
+                
+                // Update stage
+                if (data.stage) {
+                    updateStage(data.stage);
+                }
+                
+                // Update intelligence
+                if (data.intelligence_summary && data.intelligence_summary !== 'No intelligence yet') {
+                    updateIntelligence(data.intelligence_summary);
+                }
+                
+                // Check if session ended
+                if (data.callback_sent || data.stage === 'EXIT') {
+                    sessionEnded = true;
+                    document.getElementById('status-badge').className = 'status-badge ended';
+                    document.getElementById('status-badge').innerHTML = '<span>●</span> Ended';
+                    document.getElementById('send-btn').disabled = true;
+                }
+                
+            } catch (error) {
+                console.error('Status check error:', error);
+            }
+        }
+
+        function updateStage(stage) {
+            const stages = ['init', 'trust', 'extract', 'exit'];
+            const stageMap = {
+                'INIT': 0,
+                'TRUST_BUILDING': 1,
+                'DATA_EXTRACTION': 2,
+                'EXIT': 3
+            };
+            
+            const currentIndex = stageMap[stage] || 0;
+            
+            stages.forEach((s, i) => {
+                const el = document.getElementById(`stage-${s === 'trust' ? 'trust' : s === 'extract' ? 'extract' : s}`);
+                if (el) {
+                    el.className = 'stage';
+                    if (i < currentIndex) {
+                        el.classList.add('completed');
+                    } else if (i === currentIndex) {
+                        el.classList.add('active');
+                    }
+                }
+            });
+        }
+
+        function updateIntelligence(summary) {
+            const container = document.getElementById('intel-content');
+            const parts = summary.split(' | ');
+            
+            container.innerHTML = parts.map(part => 
+                `<div class="intel-item">📌 ${part}</div>`
+            ).join('');
+        }
+
+        function endSession() {
+            sessionEnded = true;
+            document.getElementById('status-badge').className = 'status-badge ended';
+            document.getElementById('status-badge').innerHTML = '<span>●</span> Ended';
+            document.getElementById('send-btn').disabled = true;
+            addMessage('Session ended manually', 'system');
+        }
+
+        // Focus input on load
+        document.getElementById('chat-input').focus();
+    </script>
+</body>
+</html>

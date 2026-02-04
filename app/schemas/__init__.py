@@ -29,6 +29,17 @@ from .scam import (
     ScamAnalysisRequest,
     ScamAnalysisResult,
 )
+from .honeypot import (
+    EngagementStage,
+    ExtractedIntelligence,
+    ConversationMessage,
+    HoneypotSessionState,
+    HoneypotRequest,
+    HoneypotResponse,
+    HoneypotCallbackPayload,
+    EngagementStrategy,
+    InternalHoneypotState,
+)
 
 __all__ = [
     # common
@@ -53,4 +64,14 @@ __all__ = [
     "ScamPattern",
     "ScamAnalysisRequest",
     "ScamAnalysisResult",
+    # honeypot
+    "EngagementStage",
+    "ExtractedIntelligence",
+    "ConversationMessage",
+    "HoneypotSessionState",
+    "HoneypotRequest",
+    "HoneypotResponse",
+    "HoneypotCallbackPayload",
+    "EngagementStrategy",
+    "InternalHoneypotState",
 ]

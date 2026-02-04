@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Analyzer - FinPal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            color: #00d9ff;
+            text-decoration: none;
+            font-size: 1.5rem;
+        }
+
+        .title {
+            font-size: 1.8rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .panel h3 {
+            color: #00d9ff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 250px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 15px;
+            color: #fff;
+            font-size: 0.95rem;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #00d9ff;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, #00d9ff, #0099cc);
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.3);
+        }
+
+        .btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Results Section */
+        .results-hidden {
+            display: none;
+        }
+
+        .risk-score-container {
+            text-align: center;
+            padding: 30px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .risk-score {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .risk-score.low { color: #00ff88; }
+        .risk-score.medium { color: #ffdd00; }
+        .risk-score.high { color: #ff6b6b; }
+
+        .risk-label {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .clauses-section {
+            margin-top: 20px;
+        }
+
+        .clause-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid;
+        }
+
+        .clause-item.risky { border-color: #ff6b6b; }
+        .clause-item.neutral { border-color: #ffdd00; }
+        .clause-item.safe { border-color: #00ff88; }
+
+        .clause-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .clause-content {
+            color: #aaa;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Examples */
+        .examples-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .examples-section h4 {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+
+        .example-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: #fff;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .example-btn:hover {
+            background: rgba(0, 217, 255, 0.2);
+            border-color: #00d9ff;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: #00d9ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .narrative-section {
+            background: rgba(0,217,255,0.1);
+            border: 1px solid rgba(0,217,255,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .narrative-section h4 {
+            color: #00d9ff;
+            margin-bottom: 10px;
+        }
+
+        .narrative-content {
+            color: #ccc;
+            line-height: 1.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-btn">←</a>
+            <h1 class="title">📋 Loan Analyzer</h1>
+        </header>
+
+        <div class="main-content">
+            <!-- Input Panel -->
+            <div class="panel">
+                <h3>📝 Loan Document</h3>
+                <div class="form-group">
+                    <label>Paste loan terms, agreement text, or offer details:</label>
+                    <textarea id="loan-text" placeholder="Enter loan terms and conditions here...
+
+Example: Interest rate 36% p.a., processing fee 5%, prepayment penalty 8%, mandatory insurance premium..."></textarea>
+                </div>
+                
+                <button class="btn" id="analyze-btn" onclick="analyzeLoan()">
+                    🔍 Analyze Loan Document
+                </button>
+
+                <div class="examples-section">
+                    <h4>Quick Examples:</h4>
+                    <button class="example-btn" onclick="loadExample('high')">⚠️ High-Risk Loan</button>
+                    <button class="example-btn" onclick="loadExample('medium')">⚡ Medium-Risk Loan</button>
+                    <button class="example-btn" onclick="loadExample('low')">✅ Low-Risk Loan</button>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="panel">
+                <h3>📊 Analysis Results</h3>
+                
+                <div id="results-placeholder" class="loading">
+                    <p style="color: #666;">Enter loan details and click Analyze to see results</p>
+                </div>
+
+                <div id="results-loading" class="loading results-hidden">
+                    <div class="spinner"></div>
+                    <p>Analyzing loan document...</p>
+                </div>
+
+                <div id="results-content" class="results-hidden">
+                    <div class="risk-score-container">
+                        <div class="risk-score" id="risk-score">-</div>
+                        <div class="risk-label" id="risk-label">Risk Score</div>
+                    </div>
+
+                    <div class="clauses-section">
+                        <h4 style="color: #888; margin-bottom: 15px;">Identified Clauses</h4>
+                        <div id="clauses-list"></div>
+                    </div>
+
+                    <div class="narrative-section">
+                        <h4>💡 Summary</h4>
+                        <div class="narrative-content" id="narrative"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+
+        const examples = {
+            high: `URGENT LOAN OFFER - Instant Cash!
+Loan Amount: Rs. 50,000
+Interest Rate: 48% per annum (compounding monthly)
+Processing Fee: 8% (deducted upfront)
+Prepayment Penalty: 15% of remaining balance
+Late Payment Charge: Rs. 500 per day
+MANDATORY Insurance: Rs. 5,000 (non-refundable)
+Tenure: 12 months
+EMI: Rs. 6,200
+
+Hidden Terms:
+- Additional service charge of 3% per month
+- No cooling-off period
+- Automatic renewal at 60% interest if not closed
+- Collection calls allowed 24/7
+- Personal guarantee required from family member
+- Access to all phone contacts granted`,
+
+            medium: `Personal Loan Offer
+Amount: Rs. 2,00,000
+Interest Rate: 18% p.a. (reducing balance)
+Processing Fee: 3%
+Tenure: 24 months
+
+Terms:
+- Prepayment allowed after 6 months (2% charge)
+- Late payment fee: Rs. 500 + 2% of EMI
+- Documentation: PAN, Aadhaar, Bank statements
+- Credit score requirement: 650+
+- Insurance optional but recommended
+- Foreclosure charges applicable`,
+
+            low: `Home Loan Pre-Approved Offer - ABC Bank
+Loan Amount: Up to Rs. 50,00,000
+Interest Rate: 8.5% p.a. (linked to repo rate)
+Processing Fee: 0.5% (max Rs. 10,000)
+Tenure: Up to 20 years
+
+Features:
+- No prepayment penalty
+- Free life insurance cover
+- Balance transfer facility available
+- Top-up loan option
+- 7-day cooling-off period
+- Transparent fee structure
+- RBI regulated
+- Doorstep service available`
+        };
+
+        function loadExample(type) {
+            document.getElementById('loan-text').value = examples[type];
+        }
+
+        async function analyzeLoan() {
+            const text = document.getElementById('loan-text').value.trim();
+            if (!text) {
+                alert('Please enter loan document text');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('results-placeholder').classList.add('results-hidden');
+            document.getElementById('results-content').classList.add('results-hidden');
+            document.getElementById('results-loading').classList.remove('results-hidden');
+            document.getElementById('analyze-btn').disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/guardian`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        route_hint: 'LOAN_DOC',
+                        language: 'en'
+                    })
+                });
+
+                const data = await response.json();
+                displayResults(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error analyzing loan. Make sure the backend is running.');
+            } finally {
+                document.getElementById('results-loading').classList.add('results-hidden');
+                document.getElementById('analyze-btn').disabled = false;
+            }
+        }
+
+        function displayResults(data) {
+            document.getElementById('results-content').classList.remove('results-hidden');
+
+            // Extract risk score
+            let riskScore = 50;
+            let riskLevel = 'medium';
+            
+            if (data.payload) {
+                if (data.payload.risk_score !== undefined) {
+                    riskScore = data.payload.risk_score;
+                } else if (data.payload.overall_risk_score !== undefined) {
+                    riskScore = data.payload.overall_risk_score;
+                }
+            }
+
+            // Determine risk level
+            if (riskScore >= 70) {
+                riskLevel = 'high';
+            } else if (riskScore >= 40) {
+                riskLevel = 'medium';
+            } else {
+                riskLevel = 'low';
+            }
+
+            // Update risk score display
+            const scoreEl = document.getElementById('risk-score');
+            scoreEl.textContent = riskScore;
+            scoreEl.className = `risk-score ${riskLevel}`;
+            
+            const labelEl = document.getElementById('risk-label');
+            labelEl.textContent = `${riskLevel.toUpperCase()} RISK`;
+
+            // Display clauses
+            const clausesList = document.getElementById('clauses-list');
+            clausesList.innerHTML = '';
+
+            if (data.payload && data.payload.clauses && data.payload.clauses.length > 0) {
+                data.payload.clauses.forEach(clause => {
+                    const severity = clause.severity || clause.risk_level || 'neutral';
+                    const sevClass = severity.toLowerCase() === 'high' ? 'risky' : 
+                                   severity.toLowerCase() === 'low' ? 'safe' : 'neutral';
+                    
+                    clausesList.innerHTML += `
+                        <div class="clause-item ${sevClass}">
+                            <div class="clause-title">
+                                <span>${clause.type || clause.name || 'Clause'}</span>
+                                <span style="color: ${sevClass === 'risky' ? '#ff6b6b' : sevClass === 'safe' ? '#00ff88' : '#ffdd00'}">${severity}</span>
+                            </div>
+                            <div class="clause-content">${clause.text || clause.description || clause.content || ''}</div>
+                        </div>
+                    `;
+                });
+            } else {
+                // Fallback: show generic analysis
+                clausesList.innerHTML = `
+                    <div class="clause-item ${riskLevel === 'high' ? 'risky' : riskLevel === 'low' ? 'safe' : 'neutral'}">
+                        <div class="clause-title">
+                            <span>Overall Assessment</span>
+                            <span>${riskLevel.toUpperCase()}</span>
+                        </div>
+                        <div class="clause-content">The loan document has been analyzed. Check the summary below for details.</div>
+                    </div>
+                `;
+            }
+
+            // Display narrative
+            const narrativeEl = document.getElementById('narrative');
+            if (data.payload && data.payload.narrative) {
+                narrativeEl.textContent = data.payload.narrative;
+            } else if (data.payload && data.payload.summary) {
+                narrativeEl.textContent = data.payload.summary;
+            } else if (data.message) {
+                narrativeEl.textContent = data.message;
+            } else {
+                narrativeEl.textContent = `This loan has a risk score of ${riskScore}/100. ${riskLevel === 'high' ? 'Exercise extreme caution before proceeding.' : riskLevel === 'low' ? 'The terms appear reasonable.' : 'Review the terms carefully.'}`;
+            }
+        }
+    </script>
+</body>
+</html>

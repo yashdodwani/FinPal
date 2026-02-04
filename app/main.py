@@ -4,6 +4,7 @@ FastAPI application entrypoint for the Financial Safety Net backend.
 This app:
 - Exposes /health for liveness checks
 - Exposes /guardian to talk to the master agent
+- Serves frontend static files at root
 
 You can run it with:
     uvicorn app.main:app --reload
@@ -14,6 +15,8 @@ For ADK:
 """
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+
 
 from app.api.router import api_router
 
@@ -28,13 +31,11 @@ def create_app() -> FastAPI:
         ),
     )
 
-    # Root ping
-    @app.get("/", tags=["root"])
-    async def root() -> dict:
-        return {"message": "Financial Safety Net API", "docs": "/docs"}
-
-    # Mount API router
+    # Mount API router (must come before static files)
     app.include_router(api_router)
+
+    # Serve frontend static files at root
+    app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
     return app
 
