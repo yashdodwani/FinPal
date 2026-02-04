@@ -22,33 +22,49 @@
 - **Citation-backed responses** with policy references
 - **UPI limits, fraud reporting, and regulatory guidance**
 
+### 🍯 Agentic Honeypot System
+- **Silent scam detection** - never reveals that a scam was detected
+- **Multi-turn engagement** with believable Indian personas
+- **Intelligence extraction** - captures UPI IDs, bank accounts, phone numbers, URLs
+- **7 engagement strategies** - confusion, trust building, credential delay, etc.
+- **Automated callback** reporting to evaluation endpoints
+- **Session state management** with persona persistence
+
+### 🖥️ Web Frontend
+- **Single-page HTML apps** with embedded CSS/JS
+- **Scam Checker** - analyze suspicious messages
+- **Loan Analyzer** - document risk scoring
+- **Policy Q&A** - chat interface for regulations
+- **Honeypot Demo** - simulate scammer conversations
+
 ## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────┐
-│           FastAPI Application                    │
-│              /guardian endpoint                  │
-└────────────────┬────────────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────────────┐
-│         Master Router Agent                      │
-│    (LLM-based intent classification)            │
-└─────┬───────────────┬──────────────┬────────────┘
-      │               │              │
-      ▼               ▼              ▼
-┌──────────┐   ┌──────────┐   ┌──────────┐
-│   Scam   │   │   Loan   │   │  Policy  │
-│ Pipeline │   │ Pipeline │   │ Pipeline │
-└──────────┘   └──────────┘   └──────────┘
-      │               │              │
-      ▼               ▼              ▼
-┌──────────┐   ┌──────────┐   ┌──────────┐
-│ Pattern  │   │ Ingestion│   │  Fetch   │
-│ Analyzer │   │ Extractor│   │Summarizer│
-│ Educator │   │Risk Score│   │   Q&A    │
-└──────────┘   │ Narrator │   └──────────┘
-               └──────────┘
+┌─────────────────────────────────────────────────────────────┐
+│              FastAPI Application                             │
+│    /guardian  /honeypot  /health  + Static Frontend         │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│              Master Router Agent                             │
+│     (LLM intent classification + silent scam gate)          │
+└───┬──────────────┬──────────────┬──────────────┬────────────┘
+    │              │              │              │
+    ▼              ▼              ▼              ▼
+┌────────┐   ┌────────┐    ┌────────┐    ┌────────────┐
+│  Scam  │   │  Loan  │    │ Policy │    │  Honeypot  │
+│Pipeline│   │Pipeline│    │Pipeline│    │  Pipeline  │
+└────────┘   └────────┘    └────────┘    └────────────┘
+    │              │              │              │
+    ▼              ▼              ▼              ▼
+┌────────┐   ┌────────┐    ┌────────┐    ┌────────────┐
+│Pattern │   │Ingest  │    │ Fetch  │    │  Session   │
+│Analyzer│   │Extract │    │Summary │    │  Manager   │
+│Educator│   │RiskScor│    │  Q&A   │    │  Persona   │
+└────────┘   │Narrator│    └────────┘    │ Intel Ext  │
+             └────────┘                  │  Callback  │
+                                         └────────────┘
 ```
 
 ## 🧰 Tech Stack
@@ -118,9 +134,9 @@
    uvicorn app.main:app --reload
    ```
 
-7. **Access the API**
-   - API: http://localhost:8000
-   - Interactive Docs: http://localhost:8000/docs
+7. **Access the application**
+   - Frontend: http://localhost:8000/
+   - API Docs: http://localhost:8000/docs
    - Alternative Docs: http://localhost:8000/redoc
 
 ## 📖 API Usage
@@ -187,16 +203,23 @@ curl -X POST "http://localhost:8000/guardian" \
 FinPal/
 ├── app/
 │   ├── agents/              # Agent implementations
-│   │   ├── master/          # Router agent
+│   │   ├── master/          # Router agent with silent scam gate
 │   │   ├── loan/            # Loan analysis pipeline
 │   │   ├── policy/          # Policy Q&A pipeline
-│   │   └── scam/            # Scam detection pipeline
+│   │   ├── scam/            # Scam detection pipeline
+│   │   └── honeypot/        # Agentic honeypot system
 │   ├── api/                 # FastAPI routes
 │   ├── core/                # Core utilities (config, Gemini client)
 │   ├── data/                # Sample data and policies
 │   ├── db/                  # Database models
 │   ├── schemas/             # Pydantic models
 │   └── utils/               # Helper utilities (OCR, vector store, etc.)
+├── frontend/                # Static HTML/CSS/JS frontend
+│   ├── index.html           # Landing page
+│   ├── scam-checker.html    # Scam analysis UI
+│   ├── loan-analyzer.html   # Loan document analyzer
+│   ├── policy-qa.html       # Policy Q&A chat
+│   └── honeypot.html        # Honeypot demo interface
 ├── tests/                   # Test suite
 ├── alembic/                 # Database migrations
 ├── requirements.txt         # Python dependencies
@@ -280,6 +303,12 @@ alembic downgrade -1
 2. **Summarizer**: Creates structured FAQ entries
 3. **Q&A**: RAG-based question answering with citations
 
+### Honeypot Pipeline
+1. **Session Manager**: Thread-safe session state with Indian personas
+2. **Intelligence Extractor**: Regex + LLM extraction of scammer data
+3. **Persona Engine**: Strategy selection and believable response generation
+4. **Callback Reporter**: Sends final intel to evaluation endpoint
+
 ## 🛣️ Roadmap
 
 ### Current Status ✅
@@ -289,6 +318,9 @@ alembic downgrade -1
 - [x] Scam detection pipeline
 - [x] Loan analysis pipeline
 - [x] Policy Q&A pipeline
+- [x] Agentic honeypot system
+- [x] Web frontend UI
+- [x] Static file serving
 
 ### Planned Features 🔮
 - [ ] **Google Messages Integration**: Real-time SMS monitoring
