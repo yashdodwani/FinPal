@@ -16,7 +16,6 @@ This will launch the ADK UI and render:
 """
 
 from google import adk
-from pydantic import BaseModel
 
 from app.schemas import UserRequest, AgentResponse
 from app.agents.master import route_request
